@@ -1,0 +1,49 @@
+{
+  "manager": "SGE",
+  "shared_tmp": "/clustertmp/$USER/test",
+  "runner": {
+    "opts": {
+      "raw": "-S /bin/bash"
+    },
+    "template": [
+      "#!/bin/bash",
+      "",
+      "function log () {",
+      "\techo >&2 `date +%%Y%%m%%d%%H%%M%%S` '[runner]:' $@",
+      "}",
+      "",
+      "log Host: $(hostname)",
+      "log Job ID: $JOB_ID",
+      "",
+      "module reset",
+      "source ~/etc/setup-modules-grp.sh zimmer",
+      "for module in %(modules)s; do",
+      "\tlog Loading module $module",
+      "\tmodule load $module",
+      "done",
+      "log Modules loaded:",
+      "module -t list",
+      "",
+      "%(commands)s",
+      "",
+      "rv=$?",
+      "if [ $rv -ne 0 ]; then",
+      "\tlog Error $rv",
+      "\texit $rv",
+      "else",
+      "\tlog Done",
+      "fi"
+    ]
+  },
+  "tasks": {
+    "TestTask": {
+      "modules": [
+        "matplotlib/1.5.1-foss-2016a-Python-2.7.11-freetype-2.6.3",
+        "PyYAML/3.11-foss-2016a-Python-2.7.11"
+      ],
+      "walltime": 1,
+      "cores": 1,
+      "memory": 1
+    }
+  }
+}

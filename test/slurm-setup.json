@@ -1,0 +1,49 @@
+{
+  "manager": "slurm",
+  "shared_tmp": "/scratch-ii2/users/$USER/test",
+  "runner": {
+    "opts": {
+      "raw": "--kill-on-invalid-dep=yes"
+    },
+    "template": [
+      "#!/bin/bash",
+      "",
+      "function log () {",
+      "\techo >&2 `date +%%Y%%m%%d%%H%%M%%S` '[runner]:' $@",
+      "}",
+      "",
+      "log Host: $(hostname)",
+      "log Job ID: $SLURM_JOB_ID",
+      "",
+      "module reset",
+      "source ~/etc/setup-modules-grp.sh zimmer",
+      "for module in %(modules)s; do",
+      "\tlog Loading module $module",
+      "\tmodule load $module",
+      "done",
+      "log Modules loaded:",
+      "module -t list",
+      "",
+      "%(commands)s",
+      "",
+      "rv=$?",
+      "if [ $rv -ne 0 ]; then",
+      "\tlog Error $rv",
+      "\texit $rv",
+      "else",
+      "\tlog Done",
+      "fi"
+    ]
+  },
+  "tasks": {
+    "TestTask": {
+      "modules": [
+        "matplotlib/2.0.2-foss-2017a-python-2.7.13",
+        "pyyaml/3.12-foss-2017a-python-2.7.13"
+      ],
+      "walltime": 1,
+      "cores": 1,
+      "memory": 1
+    }
+  }
+}
