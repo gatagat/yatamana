@@ -99,16 +99,21 @@ class Task(object):
         opts = self.defaults.copy()
         opts.update(self.opts)
         resolved = OrderedDict()
+        if 'name' in opts:
+            resolved['name'] = opts['name'] % values
         for name, value in opts.items():
             if name == 'raw':
                 resolved['raw'] = value
             elif name == 'current_working_directory':
                 resolved[name] = True
             elif name == 'log_filename':
+                tmp = values.copy()
+                tmp['job_name'] = resolved['name']
+                tmp['job_id'] = '%(job_id)s'
                 resolved[name] = os.path.expandvars(os.path.join(
-                    value % values))
+                    value % tmp))
             elif name == 'name':
-                resolved[name] = value % values
+                pass
             elif name == 'walltime':
                 resolved[name] = parse_walltime(value)
             elif name == 'cores':
@@ -146,13 +151,12 @@ class Task(object):
         runner_script : string
             Rendered runner script.
         '''
-        contents = '\n'.join(template)
         modules = self.opts.get('modules')
         if modules is None:
             modules = ''
         else:
             modules = ' '.join(modules)
-        contents = contents % {
+        contents = template % {
                 'command': self.render_command(),
                 'modules': modules}
         return contents

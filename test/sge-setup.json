@@ -3,8 +3,8 @@
   "shared_tmp": "/clustertmp/$USER/test",
   "runner": {
     "opts": {
-      "raw": "-S /bin/bash",
-      "log_filename": "%(shared_tmp)s/logs/$JOB_NAME.$JOB_ID.log"
+      "raw": ["-S", "/bin/bash"],
+      "log_filename": "%(shared_tmp)s/logs/%(job_name)s.%(job_id)s.log"
     },
     "template": [
       "#!/bin/bash",
@@ -25,7 +25,7 @@
       "log Modules loaded:",
       "module -t list",
       "",
-      "%(commands)s",
+      "%(command)s",
       "",
       "rv=$?",
       "if [ $rv -ne 0 ]; then",

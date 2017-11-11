@@ -54,10 +54,11 @@ class SlurmTaskManager(TaskManager):
         mapped = OrderedDict()
         for name, value in opts.items():
             if name == 'raw':
-                mapped['raw'] = [value]
+                mapped['raw'] = value
             elif name == 'current_working_directory':
                 mapped[name] = ['-D', '.']
-            elif name == 'log_directory':
+            elif name == 'log_filename':
+                value = value.replace('%(job_id)s', '%j')
                 mapped[name] = ['-o', value]
             elif name == 'name':
                 mapped[name] = ['-J', value]
@@ -75,3 +76,18 @@ class SlurmTaskManager(TaskManager):
             else:
                 log.error('Cannot map option: %s', name)
         return mapped
+
+    def get_job_id(self, output):
+        '''Get job ID from the submission ouput.
+
+        Parameters
+        ----------
+        output : string
+            Output of sbatch.
+
+        Returns
+        -------
+        job_id : int
+            Extracted job ID.
+        '''
+        return int(output.split(' ')[3])

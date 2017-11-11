@@ -30,10 +30,11 @@ class SgeTaskManager(TaskManager):
         mapped = OrderedDict()
         for name, value in opts.items():
             if name == 'raw':
-                mapped['raw'] = [value]
+                mapped['raw'] = value
             elif name == 'current_working_directory':
                 mapped[name] = ['-cwd']
             elif name == 'log_filename':
+                value = value.replace('%(job_id)s', '$JOB_ID')
                 mapped[name] = ['-j', 'yes', '-o', value]
             elif name == 'name':
                 mapped[name] = ['-N', value]
@@ -47,3 +48,18 @@ class SgeTaskManager(TaskManager):
             else:
                 log.error('Cannot map option: %s', name)
         return mapped
+
+    def get_job_id(self, output):
+        '''Get job ID from the submission ouput.
+
+        Parameters
+        ----------
+        output : string
+            Output of qsub.
+
+        Returns
+        -------
+        job_id : int
+            Extracted job ID.
+        '''
+        return int(output.split(' ')[2])

@@ -28,7 +28,7 @@ def setup_log(level=logging.WARNING):
 class TestTask(Task):
     def __init__(self, param, param_default='123'):
         super(TestTask, self).__init__()
-        self.cmd = ['./test_run.py', str(param), str(param_default)]
+        self.command = ['./test_run.py', str(param), str(param_default)]
 
     def is_finished(self):
         return False
@@ -37,7 +37,7 @@ class TestTask(Task):
 class Test2Task(Task):
     def __init__(self, param, param_default='123'):
         super(Test2Task, self).__init__()
-        self.cmd = ['./test_run2.py', str(param), str(param_default)]
+        self.command = ['./test_run2.py', str(param), str(param_default)]
 
     def is_finished(self):
         return False
@@ -48,6 +48,10 @@ def test_sge():
     task = TestTask('param')
     if not task.is_finished():
         task_manager.enqueue(task)
+    task2 = Test2Task('param')
+    task2.opts['dependencies'] = [task]
+    if not task2.is_finished():
+        task_manager.enqueue(task2)
 
 
 def test_slurm():

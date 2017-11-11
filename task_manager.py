@@ -66,8 +66,12 @@ class TaskManager(object):
         assert task.job_id is None
         log = logging.getLogger(self.__class__.__name__)
         task.resolve_opts(self.kwargs)
+        log_filename = task.opts.get('log_filename')
+        if log_filename is not None:
+            makedirs(os.path.dirname(log_filename))
         enqueue_cmd = [
-                self.kwargs['submit_command']] + self.map_opts(task.opts)
+                self.kwargs['submit_command']] + [
+                o for oo in self.map_opts(task.opts).values() for o in oo]
         runner_name = self.make_runner(task)
         log.info('Prepared a runner file: %s', runner_name)
         enqueue_cmd += [runner_name]
@@ -78,7 +82,7 @@ class TaskManager(object):
             log.info('Would run %s', enqueue_cmd)
         else:
             out = run_cmd(enqueue_cmd)
-            task.job_id = int(out.split(' ')[3])
+            task.job_id = self.get_job_id(out)
             log.info('Enqueued %s' % task)
         return task
 
@@ -117,6 +121,7 @@ class TaskManager(object):
         if runner_setup is None:
             self.log.error('Missing a runner section')
             raise RuntimeError
+        return runner_setup
 
     def get_task_defaults(self, clsname):
         '''Get default opts for a task of a given class.

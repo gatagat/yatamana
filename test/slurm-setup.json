@@ -3,8 +3,8 @@
   "shared_tmp": "/scratch-ii2/users/$USER/test",
   "runner": {
     "opts": {
-      "raw": "--kill-on-invalid-dep=yes",
-      "log_filename": "%(shared_tmp)s/logs/%x.%j.log"
+      "raw": ["--kill-on-invalid-dep=yes"],
+      "log_filename": "%(shared_tmp)s/logs/%(job_name)s.%(job_id)s.log"
     },
     "template": [
       "#!/bin/bash",
@@ -25,7 +25,7 @@
       "log Modules loaded:",
       "module -t list",
       "",
-      "%(commands)s",
+      "%(command)s",
       "",
       "rv=$?",
       "if [ $rv -ne 0 ]; then",
