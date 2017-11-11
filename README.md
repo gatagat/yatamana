@@ -71,11 +71,3 @@ submit.py:
     if __name__ == '__main__':
         manager = SgeTaskManager('setup.json')
         manager.enqueue(SimpleTask())
-
-
-License
--------
-
-2-clause BSD
-
-Tomas Kazmar, 2017
