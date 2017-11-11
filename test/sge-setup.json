@@ -3,7 +3,8 @@
   "shared_tmp": "/clustertmp/$USER/test",
   "runner": {
     "opts": {
-      "raw": "-S /bin/bash"
+      "raw": "-S /bin/bash",
+      "log_filename": "%(shared_tmp)s/logs/$JOB_NAME.$JOB_ID.log"
     },
     "template": [
       "#!/bin/bash",

@@ -4,7 +4,7 @@ import os
 import sys
 import logging
 
-from submit_helpers import SgeClusterManager, SlurmClusterManager, ClusterTask
+from yatamana import SgeTaskManager, SlurmTaskManager, Task
 
 
 def setup_log(level=logging.WARNING):
@@ -25,7 +25,7 @@ def setup_log(level=logging.WARNING):
     return log
 
 
-class TestTask(ClusterTask):
+class TestTask(Task):
     def __init__(self, param, param_default='123'):
         super(TestTask, self).__init__()
         self.cmd = ['./test_run.py', str(param), str(param_default)]
@@ -34,7 +34,7 @@ class TestTask(ClusterTask):
         return False
 
 
-class Test2Task(ClusterTask):
+class Test2Task(Task):
     def __init__(self, param, param_default='123'):
         super(Test2Task, self).__init__()
         self.cmd = ['./test_run2.py', str(param), str(param_default)]
@@ -44,14 +44,14 @@ class Test2Task(ClusterTask):
 
 
 def test_sge():
-    task_manager = SgeClusterManager(setup_file='sge-setup.json')
+    task_manager = SgeTaskManager(setup_file='sge-setup.json')
     task = TestTask('param')
     if not task.is_finished():
         task_manager.enqueue(task)
 
 
 def test_slurm():
-    task_manager = SlurmClusterManager(setup_file='slurm-setup.json')
+    task_manager = SlurmTaskManager(setup_file='slurm-setup.json')
     task = TestTask('param')
     if not task.is_finished():
         task_manager.enqueue(task)

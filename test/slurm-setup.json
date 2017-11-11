@@ -3,7 +3,8 @@
   "shared_tmp": "/scratch-ii2/users/$USER/test",
   "runner": {
     "opts": {
-      "raw": "--kill-on-invalid-dep=yes"
+      "raw": "--kill-on-invalid-dep=yes",
+      "log_filename": "%(shared_tmp)s/logs/%x.%j.log"
     },
     "template": [
       "#!/bin/bash",

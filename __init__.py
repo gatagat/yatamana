@@ -1,12 +1,12 @@
-from .cluster_task import ClusterTask
-from .cluster_manager import ClusterManager
-from .sge_cluster_manager import SgeClusterManager
-from .slurm_cluster_manager import SlurmClusterManager
+from .task import TaskTask
+from .task_manager import TaskManager
+from .sge_task_manager import SgeTaskManager
+from .slurm_task_manager import SlurmTaskManager
 
-__all__ = ['ClusterTask', 'ClusterManager', 'SgeClusterManager',
-           'SlurmClusterManager', 'CeleryClusterManager']
+__all__ = ['Task', 'TaskManager', 'SgeTaskManager', 'SlurmTaskManager',
+           'CeleryTaskManager']
 
 
-class CeleryClusterManager(ClusterManager):
+class CeleryTaskManager(TaskManager):
     def enqueue_inner(self, task):
         raise NotImplementedError
