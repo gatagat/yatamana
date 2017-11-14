@@ -80,6 +80,7 @@ class TaskManager(object):
                 datetime.now(), ' '.join(enqueue_cmd)))
         if self.dryrun is True:
             log.info('Would run %s', enqueue_cmd)
+            task.job_id = -1
         else:
             out = run_cmd(enqueue_cmd)
             task.job_id = self.get_job_id(out)
@@ -109,7 +110,7 @@ class TaskManager(object):
             template = setup.get('template')
             if template is None:
                 log.error('Missing a runner.template section')
-                raise RuntimeError
+                raise ValueError('Missing a runner.template section')
             template = '\n'.join(template)
             fw.write(task.render_runner(template))
         make_executable(fw.name)
@@ -120,7 +121,7 @@ class TaskManager(object):
         runner_setup = self.kwargs.get('runner')
         if runner_setup is None:
             self.log.error('Missing a runner section')
-            raise RuntimeError
+            raise ValueError('Missing a runner section')
         return runner_setup
 
     def get_task_defaults(self, clsname):

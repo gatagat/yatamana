@@ -1,3 +1,5 @@
+- put number of tasks into json spec under tasks.SomeTask - wait this would
+  mean i'd have to cache tasks to be enqueued inside TaskManager.enqueue()
 - ? how many jobids can i put into -hold_jid / -d
 - ? can i use array jobs
     - some templating + job args in a file + line per task(?)

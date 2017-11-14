@@ -29,14 +29,14 @@ class ChunkOfTasksTask(Task):
         dependencies = set()
         memory = 0
         modules = None
-        walltime = []
+        walltime = 0
         for i, task in enumerate(self.tasks):
             task.resolve_opts(values)
             cores = max(task.opts.get('cores', 0), cores)
             memory = max(task.opts.get('memory', 0), memory)
             dependencies |= set(task.opts.get('dependencies', []))
             walltime += task.opts.get('walltime', 0)
-            modules_i = set(task.opts.get('modules'), [])
+            modules_i = set(task.opts.get('modules', []))
             if i == 0:
                 modules = modules_i
             else:
@@ -45,7 +45,7 @@ class ChunkOfTasksTask(Task):
                     log.warning(
                         'Tasks in chunk request differing modules: %s vs. %s',
                         list(modules), list(modules_i))
-        resolved = deepcopy(task[0].opts)
+        resolved = deepcopy(self.tasks[0].opts)
         if cores > 0:
             resolved['cores'] = cores
         if dependencies:
@@ -58,10 +58,10 @@ class ChunkOfTasksTask(Task):
             self.opts = resolved
         return resolved
 
-    def render_cmd(self):
+    def render_command(self):
         # TODO: allow setting the separator in the config. The values could be:
         # ' && '
         # '\n'
         # '\nrv=$?\nif [ $rv != 0 ]; then log Error $rv; exit $rv; fi\n'
         #
-        return ' && '.join([task.render_cmd() for task in self.tasks])
+        return ' && \\\n'.join([task.render_command() for task in self.tasks])
