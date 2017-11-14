@@ -4,7 +4,7 @@ import os
 import sys
 import logging
 
-from yatamana import SgeTaskManager, SlurmTaskManager, Task
+from yatamana import LocalTaskManager, SgeTaskManager, SlurmTaskManager, Task
 
 
 def setup_log(level=logging.WARNING):
@@ -65,9 +65,22 @@ def test_slurm():
         task_manager.enqueue(task2)
 
 
+def test_local():
+    task_manager = LocalTaskManager(setup_file='local-setup.json')
+    task = TestTask('param')
+    if not task.is_finished():
+        task_manager.enqueue(task)
+    task2 = Test2Task('param')
+    task2.opts['dependencies'] = [task]
+    if not task2.is_finished():
+        task_manager.enqueue(task2)
+
+
 if __name__ == '__main__':
     setup_log(logging.DEBUG)
     if os.environ.get('IMPIMBA_MACHINE_NAME') == 'IMPIMBA-2':
         test_slurm()
-    else:
+    elif os.path.isdir('/biosw'):
         test_sge()
+    else:
+        test_local()

@@ -1,0 +1,12 @@
+{
+  "runner": {
+    "template": [
+      "export PYTHONPATH=.:$PYTHONPATH",
+      "%(command)s"
+    ]
+  },
+  "tasks": {
+    "TestTask": {},
+    "Test2Task": {}
+  }
+}
