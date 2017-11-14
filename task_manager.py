@@ -61,6 +61,25 @@ class TaskManager(object):
         task.update_defaults(self.get_task_defaults(task.__class__.__name__))
         return self.enqueue_inner(task)
 
+    def enqueue_chunked(self, tasks, n=5):
+        """Enqueue in chunks.
+
+        Iterator returning enqueued jobs.
+
+        Parameters
+        ----------
+        tasks - iterable of tasks
+        n - number of tasks per chunk
+        """
+        chunk = []
+        for task in tasks:
+            chunk += [task]
+            if len(chunk) >= n:
+                yield self.enqueue(chunk)
+                chunk = []
+        if chunk:
+            yield self.enqueue(chunk)
+
     def enqueue_inner(self, task):
         '''Actually enque task.'''
         assert task.job_id is None
