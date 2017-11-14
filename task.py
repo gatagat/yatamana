@@ -121,7 +121,8 @@ class Task(object):
             elif name == 'memory':
                 resolved[name] = value
             elif name == 'dependencies':
-                resolved[name] = [_.job_id for _ in value]
+                if value:
+                    resolved[name] = [_.job_id for _ in value]
             elif name == 'modules':
                 resolved[name] = value
             else:
