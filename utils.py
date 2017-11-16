@@ -25,7 +25,7 @@ def run_cmd(cmd):
                 cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out = p.communicate()[0]
         if p.returncode != 0:
-            raise RuntimeError('Error submitting "%s" (%d): %s' % (
+            raise RuntimeError('Error running "%s" (%d): %s' % (
                 ' '.join(cmd), p.returncode, out))
         return out
     except KeyboardInterrupt:
