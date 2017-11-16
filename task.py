@@ -161,3 +161,8 @@ class Task(object):
                 'command': self.render_command(),
                 'modules': modules}
         return contents
+
+
+class FileExistsFinishedMixin(object):
+    def is_finished(self):
+        return os.path.exists(self.out_filename)
