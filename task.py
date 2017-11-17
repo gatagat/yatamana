@@ -1,6 +1,5 @@
 import os
 import numbers
-import logging
 from collections import OrderedDict
 
 
@@ -95,16 +94,13 @@ class Task(object):
         resolved : dict-like
             Resolved options.
         '''
-        log = logging.getLogger(self.__class__.__name__)
         opts = self.defaults.copy()
         opts.update(self.opts)
         resolved = OrderedDict()
         if 'name' in opts:
             resolved['name'] = opts['name'] % values
         for name, value in opts.items():
-            if name == 'raw':
-                resolved['raw'] = value
-            elif name == 'current_working_directory':
+            if name == 'current_working_directory':
                 resolved[name] = True
             elif name == 'log_filename':
                 tmp = values.copy()
@@ -116,17 +112,11 @@ class Task(object):
                 pass
             elif name == 'walltime':
                 resolved[name] = parse_walltime(value)
-            elif name == 'cores':
-                resolved[name] = value
-            elif name == 'memory':
-                resolved[name] = value
             elif name == 'dependencies':
                 if value:
                     resolved[name] = [_.job_id for _ in value]
-            elif name == 'modules':
-                resolved[name] = value
             else:
-                log.error('Cannot resolve option: %s', name)
+                resolved[name] = value
         if update_self is True:
             self.opts = resolved
         return resolved

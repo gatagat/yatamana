@@ -64,6 +64,8 @@ class SlurmTaskManager(TaskManager):
                 mapped[name] = ['-J', value]
             elif name == 'walltime':
                 mapped[name] = ['-t', format_time(value)]
+            elif name == 'qos':
+                mapped[name] = ['--qos=' + value]
             elif name == 'cores':
                 mapped[name] = ['-n', str(value)]
             elif name == 'memory':
