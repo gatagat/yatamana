@@ -95,8 +95,15 @@ class TaskManager(object):
         log.info('Prepared a runner file: %s', runner_name)
         enqueue_cmd += [runner_name]
         with open(runner_name, 'a') as fw:
-            fw.write('\n# Submitted %s using:\n# %s\n' % (
-                datetime.now(), ' '.join(enqueue_cmd)))
+            footer = [
+                    '',
+                    '#',
+                    '# Created at %s' % datetime.now(),
+                    '# In %s' % os.getcwd(),
+                    '# Command planned:',
+                    '# %s' % ' '.join(enqueue_cmd),
+                    '#']
+            fw.write('\n'.join(footer))
         if self.dryrun is True:
             log.info('Would run %s', enqueue_cmd)
             task.job_id = -1
