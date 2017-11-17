@@ -1,3 +1,5 @@
+from __future__ import (
+        division, print_function, unicode_literals, absolute_import)
 import os
 import json
 from contextlib import contextmanager
@@ -55,14 +57,14 @@ def stage_symlink(meta, params):
 
 def stage_copy(meta, params):
     '''Stage a file by copying.'''
-    ln_path = which('cp')
+    cp_path = which('cp')
     item = params['file']
     src_dir = item[0] % meta
     if len(item) == 1:
         dst_dir = src_dir
     else:
         dst_dir = item[1] % meta
-    run_cmd([ln_path, src_dir, dst_dir])
+    run_cmd([cp_path, src_dir, dst_dir])
 
 
 def stage_do(meta, config):

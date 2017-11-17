@@ -1,3 +1,5 @@
+from __future__ import (
+        division, print_function, unicode_literals, absolute_import)
 import datetime
 import errno
 import logging
@@ -25,6 +27,7 @@ def run_cmd(cmd):
                 cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out = p.communicate()[0]
         if p.returncode != 0:
+            out = out.decode('ascii', 'ignore').encode('ascii')
             raise RuntimeError('Error running "%s" (%d): %s' % (
                 ' '.join(cmd), p.returncode, out))
         return out
