@@ -56,6 +56,14 @@ def stage_symlink(meta, params):
         dst_dir = src_dir
     else:
         dst_dir = item[1] % meta
+    if os.path.lexists(dst_dir):
+        actual_path = os.path.realpath(dst_dir)
+        src_path = os.path.realpath(src_dir)
+        if actual_path != src_path:
+            raise RuntimeError(
+                    'Path %s already exists pointing to %s instead of %s' % (
+                        dst_dir, actual_path, src_path))
+        return
     run_cmd([ln_path, '-s', src_dir, dst_dir])
 
 
