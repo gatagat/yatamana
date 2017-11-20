@@ -2,6 +2,7 @@ from __future__ import (
         division, print_function, unicode_literals, absolute_import)
 import os
 import json
+from glob import glob
 from contextlib import contextmanager
 from .utils import which, run_cmd, makedirs, get_timestamp
 
@@ -20,6 +21,14 @@ def stage_touch_all(meta, params):
     find_path = which('find')
     target_dir = os.path.join(meta['stage_dir'], params['target'] % meta)
     run_cmd([find_path, target_dir, '-exec', 'touch', '{}', ';'])
+
+
+def stage_chmod(meta, params):
+    '''Chmod files below the target directory.'''
+    chmod_path = which('chmod')
+    target = os.path.join(meta['stage_dir'], params['target'] % meta)
+    target = list(glob(target))
+    run_cmd([chmod_path, params['mode']] + target)
 
 
 def stage_git(meta, params):
@@ -86,6 +95,7 @@ def stage_do(meta, config):
         'git': stage_git,
         'rsync': stage_rsync,
         'copy': stage_copy,
+        'chmod': stage_chmod,
         'symlink': stage_symlink}
     method = config['method']
     methods[method](meta, config.get('params'))
