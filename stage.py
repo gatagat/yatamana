@@ -18,14 +18,14 @@ def cwd(dirname):
 def stage_touch_all(meta, params):
     '''Touch all files below the target directory.'''
     find_path = which('find')
-    target_dir = params['target'] % meta
+    target_dir = os.path.join(meta['stage_dir'], params['target'] % meta)
     run_cmd([find_path, target_dir, '-exec', 'touch', '{}', ';'])
 
 
 def stage_git(meta, params):
     '''Stage sources using git.'''
     git_path = which('git')
-    target_dir = params['target'] % meta
+    target_dir = os.path.join(meta['stage_dir'], params['target'] % meta)
     repo_url = params['repo_url']
     makedirs(target_dir)
     with cwd(target_dir):
@@ -42,7 +42,7 @@ def stage_git(meta, params):
 def stage_rsync(meta, params):
     '''Stage sources using rsync.'''
     rsync_path = which('rsync')
-    target_dir = params['target'] % meta
+    target_dir = os.path.join(meta['stage_dir'], params['target'] % meta)
     repo_url = params['repo_url']
     run_cmd([rsync_path, '-avuz', repo_url, target_dir])
 
@@ -71,12 +71,12 @@ def stage_copy(meta, params):
     '''Stage a file by copying.'''
     cp_path = which('cp')
     item = params['file']
-    src_dir = item[0] % meta
+    src_name = item[0] % meta
     if len(item) == 1:
-        dst_dir = src_dir
+        dst_name = meta['stage_dir']
     else:
-        dst_dir = item[1] % meta
-    run_cmd([cp_path, src_dir, dst_dir])
+        dst_name = os.path.join(meta['stage_dir'], item[1] % meta)
+    run_cmd([cp_path, src_name, dst_name])
 
 
 def stage_do(meta, config):
@@ -97,15 +97,13 @@ def stage_setup(config_filename, stage_dir):
     Helper for stage scripts that would take the paramters of
     this functions as command line arguments.
     '''
-    config = json.load(open(config_filename))
+    config = json.load(open(config_filename))['stage']
     meta = config.get('meta', {})
-    procedure = config.get('procedure', [])
-
+    procedure = config.get('procedure', {})
     if stage_dir is None:
         stage_dir = meta['stage_dir']
     stage_dir = os.path.expandvars(stage_dir)
     stage_dir = stage_dir % {'timestamp': get_timestamp()}
     meta['stage_dir'] = stage_dir
     makedirs(stage_dir)
-
     return meta, procedure
