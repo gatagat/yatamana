@@ -4,6 +4,7 @@ from .sge_task_manager import SgeTaskManager
 from .slurm_task_manager import SlurmTaskManager
 from .task import Task, FileExistsFinishedMixin
 from .task_manager import TaskManager
+from .task_manager_factory import get_task_manager
 
 __all__ = [
         'CeleryTaskManager',
@@ -13,7 +14,8 @@ __all__ = [
         'SlurmTaskManager',
         'Task',
         'TaskManager',
-        'FileExistsFinishedMixin'
+        'FileExistsFinishedMixin',
+        'get_task_manager'
         ]
 
 
