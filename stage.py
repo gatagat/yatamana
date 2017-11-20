@@ -30,9 +30,13 @@ def stage_git(meta, params):
     makedirs(target_dir)
     with cwd(target_dir):
         if os.path.isdir('.git'):
-            run_cmd([git_path, 'update'])
+            run_cmd([git_path, 'pull'])
+            run_cmd([git_path, 'submodule', 'update'])
         else:
-            run_cmd([git_path, 'clone', repo_url, target_dir])
+            clone_opts = params.get('clone_opts', [])
+            run_cmd([git_path, 'clone'] + clone_opts + [repo_url, '.'])
+            run_cmd([git_path, 'submodule', 'init'])
+            run_cmd([git_path, 'submodule', 'update'])
 
 
 def stage_rsync(meta, params):
