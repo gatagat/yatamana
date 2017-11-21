@@ -22,7 +22,8 @@ class TaskManager(object):
     def __init__(self, setup_file, dryrun=False, **kwargs):
         self.log = logging.getLogger(self.__class__.__name__)
         self.dryrun = dryrun
-        self.kwargs = json.load(open(setup_file))
+        with open(setup_file) as fr:
+            self.kwargs = json.load(fr)
         self.kwargs.update(kwargs)
         if 'salt' not in self.kwargs:
             self.kwargs['salt'] = make_salt(6)
@@ -63,7 +64,26 @@ class TaskManager(object):
         task.update_defaults(self.get_task_defaults(task.__class__.__name__))
         return self.enqueue_inner(task)
 
-    def enqueue_chunked(self, tasks, n=5):
+    def get_chunk_size(self, clsname, default=5):
+        '''Get chunk size from defaults.
+
+        Parameters
+        ----------
+        clsname : string
+            Class name of the tasks to be chunked.
+        default : int
+            Default number of tasks per chunk.
+
+        Returns
+        -------
+        n : int
+            Number of tasks per chunk.
+        '''
+        opts = self.get_task_defaults('ChunkOfTasksTask')
+        n = opts.get('chunk_size', {}).get(clsname, default)
+        return n
+
+    def enqueue_chunked(self, tasks, n=None):
         """Enqueue in chunks.
 
         Iterator returning enqueued jobs.
@@ -72,9 +92,15 @@ class TaskManager(object):
         ----------
         tasks - iterable of tasks
         n - number of tasks per chunk
+
+        If n is not specified, the defaults of ChunkOfTasksTask
+        are checked for chunk_size.clsname_of_the_task. If the
+        default is not specified either, n=5 is used.
         """
         chunk = []
         for task in tasks:
+            if n is None:
+                n = self.get_chunk_size(task.__class__.__name__)
             chunk += [task]
             if len(chunk) >= n:
                 yield self.enqueue(chunk)
