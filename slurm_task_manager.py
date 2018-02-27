@@ -69,7 +69,7 @@ class SlurmTaskManager(TaskManager):
             elif name == 'qos':
                 mapped[name] = ['--qos=' + value]
             elif name == 'cores':
-                mapped[name] = ['-c', str(value), '-N', '1']
+                mapped[name] = ['-c', str(value), '-N', '1-1']
             elif name == 'memory':
                 mapped[name] = ['--mem-per-cpu=%dG' % value]
             elif name == 'dependencies':
