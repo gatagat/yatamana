@@ -16,6 +16,10 @@ Usage
 
 Runner script and task options are defined through a simple json setup file.
 
+As of now, there is no automated serialization of the Task or its data. The
+Task is expected to prepare a command line to be run in its `command` field,
+which is then embedded inside a runner script submitted to the cluster.
+
 ### Json setup file
 
 Setup files have to contain at least a runner script template under
