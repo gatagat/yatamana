@@ -2,9 +2,9 @@ yatamana - yet another task manager
 ===================================
 
 Yatamana simplifies submitting tasks to (HPC) clusters in a cluster-agnostic
-way.  As of now there is an initial support for Sun Grid Engine and Slurm.
-
-In the future, local Celery local blocking execution will be added.
+way.  As of now, it supports Sun Grid Engine, Slurm, and local execution.
+Local execution is not parallelized and can be used for debugging.  The plan is
+to add execution using Celery in the future.
 
 
 Usage
