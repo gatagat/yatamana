@@ -71,7 +71,7 @@ class SlurmTaskManager(TaskManager):
             elif name == 'cores':
                 mapped[name] = ['-c', str(value), '-N', '1-1']
             elif name == 'memory':
-                mapped[name] = ['--mem-per-cpu=%dG' % value]
+                mapped[name] = ['--mem=%dG' % value]
             elif name == 'dependencies':
                 mapped[name] = ['-d', ':'.join(
                     ['afterok'] + [str(job_id) for job_id in value])]
