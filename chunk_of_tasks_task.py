@@ -67,3 +67,23 @@ class ChunkOfTasksTask(Task):
         # '\nrv=$?\nif [ $rv != 0 ]; then log Error $rv; exit $rv; fi\n'
         #
         return ' && \\\n'.join([task.render_command() for task in self.tasks])
+
+    def get_runner_prefix(self):
+        '''Return a prefix for the runner file.'''
+        if not self.tasks:
+            return 'EmptyChunkOfTasks'
+        prefix = 'ChunkOf'
+        last_name = None
+        last_count = 0
+        for task in self.tasks:
+            name = task.__class__.__name__
+            if last_name == name:
+                last_count += 1
+            else:
+                if last_count > 0:
+                    prefix += '%sx%d' % (last_name, last_count)
+                last_name = name
+                last_count = 1
+        if last_count > 0:
+            prefix += '%sx%d' % (last_name, last_count)
+        return prefix

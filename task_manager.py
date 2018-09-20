@@ -159,7 +159,7 @@ class TaskManager(object):
         makedirs(self.runner_dir)
         with NamedTemporaryFile(
                 mode='w', suffix='.sh',
-                prefix=task.__class__.__name__ + '-', dir=self.runner_dir,
+                prefix=task.get_runner_prefix() + '-', dir=self.runner_dir,
                 delete=False) as fw:
             template = setup.get('template')
             if template is None:

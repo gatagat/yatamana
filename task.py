@@ -154,6 +154,10 @@ class Task(object):
                 'modules': modules}
         return contents
 
+    def get_runner_prefix(self):
+        '''Return a prefix for the runner file.'''
+        return self.__class__.__name__
+
 
 class FileExistsFinishedMixin(object):
     def is_finished(self):
