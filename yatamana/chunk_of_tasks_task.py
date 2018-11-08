@@ -6,6 +6,13 @@ from .task import Task
 
 
 class ChunkOfTasksTask(Task):
+    """ Task containing multiple tasks.
+
+    Arguments
+    ---------
+    tasks : list of Task
+        Tasks to put inside this chunk of tasks.
+    """
     def __init__(self, tasks):
         super(ChunkOfTasksTask, self).__init__()
         if not tasks:
@@ -13,20 +20,26 @@ class ChunkOfTasksTask(Task):
         self.tasks = tasks
 
     def resolve_opts(self, values, update_self=True):
-        '''Resolve options of all the contained tasks and itself.
+        """Resolve options of all the contained tasks and itself.
+
+        To resolve the contained tasks, their :py:meth:`Task.resolve_opts`
+        method is called and the information accumulated.  The number of cores
+        and memory are set to the maxima of their respective individual values.
+        The dependencies and environmental modules are set to their respective
+        unions.  The compute time is set to a sum of the individual values.
 
         Parameters
         ----------
         values : dict-like
             Values to use for format string resolution.
         update_self : bool
-            Whether or not to update self.opts.
+            Whether or not to update `self.opts`.
 
         Returns
         -------
         resolved : dict-like
             Resolved options. Also assigned to this task.
-        '''
+        """
         cores = 0
         dependencies = set()
         memory = 0
@@ -61,6 +74,13 @@ class ChunkOfTasksTask(Task):
         return resolved
 
     def render_command(self):
+        """ Render the commands of all contained tasks into a single string.
+
+        Returns
+        -------
+        command : str
+            Rendered command.
+        """
         # TODO: allow setting the separator in the config. The values could be:
         # ' && '
         # '\n'

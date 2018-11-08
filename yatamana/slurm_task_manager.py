@@ -1,5 +1,6 @@
 from __future__ import (
-        division, print_function, unicode_literals, absolute_import)
+        print_function, division, absolute_import, unicode_literals)
+
 import logging
 from math import ceil
 from collections import OrderedDict
@@ -8,7 +9,7 @@ from .task_manager import TaskManager
 
 
 def format_time(seconds):
-    '''Format time interval the slurm way.
+    """Format time interval the slurm way.
 
     Parameters
     ----------
@@ -19,7 +20,7 @@ def format_time(seconds):
     -------
     s : string
         Formatted time interval.
-    '''
+    """
     seconds = int(ceil(seconds))
     minutes = seconds // 60
     seconds -= minutes * 60
@@ -31,8 +32,8 @@ def format_time(seconds):
 
 
 class SlurmTaskManager(TaskManager):
-    '''Task manager for Slurm.
-    '''
+    """Task manager for Slurm.
+    """
 
     default_submit_command = which('sbatch')
 
@@ -40,7 +41,7 @@ class SlurmTaskManager(TaskManager):
         super(SlurmTaskManager, self).__init__(setup_file, **kwargs)
 
     def map_opts(self, opts):
-        '''Map resolved task options into slurm-specific options.
+        """Map resolved task options into slurm-specific options.
 
         Parameters
         ----------
@@ -51,7 +52,7 @@ class SlurmTaskManager(TaskManager):
         -------
         mapped : dict-like
             Options mapped into command-line options for sbatch.
-        '''
+        """
         log = logging.getLogger(self.__class__.__name__)
         mapped = OrderedDict()
         for name, value in opts.items():
@@ -82,7 +83,7 @@ class SlurmTaskManager(TaskManager):
         return mapped
 
     def get_job_id(self, output):
-        '''Get job ID from the submission ouput.
+        """Get job ID from the submission ouput.
 
         Parameters
         ----------
@@ -93,5 +94,5 @@ class SlurmTaskManager(TaskManager):
         -------
         job_id : int
             Extracted job ID.
-        '''
+        """
         return int(output.split(' ')[3])

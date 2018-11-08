@@ -1,5 +1,6 @@
 from __future__ import (
-        division, print_function, unicode_literals, absolute_import)
+        print_function, division, absolute_import, unicode_literals)
+
 import os
 import json
 import logging
@@ -12,13 +13,40 @@ from .chunk_of_tasks_task import ChunkOfTasksTask
 
 
 class TaskManager(object):
-    '''Base class for all task managers.
+    """Base class for all task managers.
 
-    See also
+    The main function of the TaskManager is its :py:meth:`.enqueue`.
+
+    Attributes
+    ----------
+    default_submit_command : str
+        Full path to the binary that submits to the cluster. Subclasses have to
+        redefine this class attribute providing a valid value.
+
+    Parameters
+    ----------
+    setup_file : str
+        Filename of the setup file with configuration options.
+    dryrun : bool, optional
+        Do not enqueue any jobs, only prepare them. Default: False.
+    salt : str
+        String unique to this instance used to avoid filename clashes. Default:
+        use :py:func:`.make_salt` to generate the salt.
+    submit_command : str, optional
+        Full path to the binary that submits to the cluster. If not specified,
+        the `default_submit_command` attribute is used.
+    kwargs
+        Additional configuration options overriding the values in the setup
+        file.
+
+    See Also
     --------
     SgeTaskManager
     SlurmTaskManager
-    '''
+    """
+
+    default_submit_command = None
+
     def __init__(self, setup_file, dryrun=False, **kwargs):
         self.log = logging.getLogger(self.__class__.__name__)
         self.dryrun = dryrun
@@ -38,23 +66,23 @@ class TaskManager(object):
             self.runner_dir = os.path.expandvars(os.path.join(tmp, 'run'))
 
     def enqueue(self, task):
-        '''Enqueue a given task to be computed.
+        """Enqueue a given task to be computed.
+
+        If mupltiple tasks are given, a single wrapper task
+        :py:obj:`.ChunkOfTasksTask` is created and enqueued. As a result all
+        the tasks land inside a single compute job.
 
         Parameters
         ----------
-        task : Task | iterable of Task-s
+        task : Task | iterable of Task
             One or more tasks to be computed.
-
-        If mupltiple tasks are passed in this function, a single wrapper task
-        ChunkOfTasksTask is created and enqueued. All the tasks land inside a
-        single compute job.
 
         Returns
         -------
         enqueued_task : Task
-            Enqueued single task or ChunkOfTasksTask in the case of multiple
-            tasks.
-        '''
+            Enqueued single task or :py:obj:`.ChunkOfTasksTask` in the case of
+            multiple tasks.
+        """
         if not issubclass(task.__class__, Task):
             tasks = task
             for task in tasks:
@@ -109,7 +137,18 @@ class TaskManager(object):
             yield self.enqueue(chunk)
 
     def enqueue_inner(self, task):
-        '''Actually enque task.'''
+        """Actually enque task.
+
+        Parameters
+        ----------
+        task : Task
+            Task to be enqueued.
+
+        Returns
+        -------
+        task : Task
+            Enqueued task with the `job_id` attribute set.
+        """
         assert task.job_id is None
         log = logging.getLogger(self.__class__.__name__)
         task.resolve_opts(self.kwargs)
@@ -142,7 +181,11 @@ class TaskManager(object):
         return task
 
     def make_runner(self, task):
-        '''Create a runner script in a temporary file.
+        """Create a runner script in a temporary file.
+
+        Use a template specified by the ``runner.template`` configuration
+        option. This template is filled in by a call to
+        :py:meth:`.Task.render_runner`.
 
         Parameters
         ----------
@@ -153,7 +196,7 @@ class TaskManager(object):
         -------
         runner_name : string
             Filename of the created runner script.
-        '''
+        """
         log = logging.getLogger(self.__class__.__name__)
         setup = self.get_runner_setup()
         makedirs(self.runner_dir)
@@ -171,7 +214,8 @@ class TaskManager(object):
         return fw.name
 
     def get_runner_setup(self):
-        '''Get a runner section of the setup.'''
+        """Get a runner section of the setup.
+        """
         runner_setup = self.kwargs.get('runner')
         if runner_setup is None:
             self.log.error('Missing a runner section')
@@ -179,10 +223,11 @@ class TaskManager(object):
         return runner_setup
 
     def get_task_defaults(self, clsname):
-        '''Get default opts for a task of a given class.
+        """Get default opts for a task of a given class.
 
-        Options are collected from the general setup in runner.opts and
-        specific setup in tasks.clsname. The latter overwrite the former.
+        Options are collected from the general setup in ``runner.opts`` and
+        specific setup in ``tasks.SomeClassName``. The latter overwrite the
+        former.
 
         Parameters
         ----------
@@ -193,7 +238,7 @@ class TaskManager(object):
         -------
         defaults : dict-like
             Default options.
-        '''
+        """
         log = logging.getLogger(self.__class__.__name__)
         opts = self.get_runner_setup().get('opts', {})
         opts = opts.copy()
