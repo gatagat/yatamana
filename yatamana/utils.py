@@ -1,5 +1,9 @@
 """
-yatamana utility functions
+yatamana.utils
+--------------
+
+Yatamana utility functions.
+
 """
 
 from __future__ import (
@@ -75,8 +79,8 @@ def parse_walltime(value):
 def make_salt(n=4):
     """Generate a random alphanumeric string.
 
-    Arguments
-    ---------
+    Parameters
+    ----------
     n : int
         String length.
 

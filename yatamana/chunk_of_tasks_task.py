@@ -8,8 +8,8 @@ from .task import Task
 class ChunkOfTasksTask(Task):
     """ Task containing multiple tasks.
 
-    Arguments
-    ---------
+    Parameters
+    ----------
     tasks : list of Task
         Tasks to put inside this chunk of tasks.
     """

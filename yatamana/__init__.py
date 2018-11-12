@@ -4,6 +4,7 @@ yatamana
 
 Task manager simplifying submitting tasks to (HPC) clusters in a
 cluster-agnostic way.
+
 """
 
 from __future__ import (
@@ -21,7 +22,8 @@ __all__ = [
         'get_task_manager'
         ]
 
-from .task import Task, FileExistsFinishedMixin
+from .task import Task
+from .file_exists_finished_mixin import FileExistsFinishedMixin
 from .chunk_of_tasks_task import ChunkOfTasksTask
 from .task_manager import TaskManager
 from .task_manager_factory import get_task_manager
