@@ -93,7 +93,7 @@ class TaskManager(object):
         return self.enqueue_inner(task)
 
     def get_chunk_size(self, clsname, default=5):
-        '''Get chunk size from defaults.
+        """Get chunk size from defaults.
 
         Parameters
         ----------
@@ -106,7 +106,7 @@ class TaskManager(object):
         -------
         n : int
             Number of tasks per chunk.
-        '''
+        """
         opts = self.get_task_defaults('ChunkOfTasksTask')
         n = opts.get('chunk_size', {}).get(clsname, default)
         return n
@@ -118,12 +118,14 @@ class TaskManager(object):
 
         Parameters
         ----------
-        tasks - iterable of tasks
-        n - number of tasks per chunk
+        tasks : iterable of tasks
+            Tasks.
+        n : int
+            Number of tasks per chunk.
 
-        If n is not specified, the defaults of ChunkOfTasksTask
-        are checked for chunk_size.clsname_of_the_task. If the
-        default is not specified either, n=5 is used.
+        If ``n`` is not specified, the defaults of ChunkOfTasksTask are checked
+        for ``chunk_size.clsname_of_the_task``. If the default is not specified
+        either, ``n=5`` is used.
         """
         chunk = []
         for task in tasks:

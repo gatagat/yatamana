@@ -9,7 +9,8 @@ from .utils import which, run_cmd, makedirs, get_timestamp
 
 @contextmanager
 def cwd(dirname):
-    '''Change working directory context manager.'''
+    """ Change working directory context manager.
+    """
     old_dir = os.getcwd()
     os.chdir(dirname)
     yield
@@ -17,14 +18,16 @@ def cwd(dirname):
 
 
 def stage_touch_all(meta, params):
-    '''Touch all files below the target directory.'''
+    """ Touch all files below the target directory.
+    """
     find_path = which('find')
     target_dir = os.path.join(meta['stage_dir'], params['target'] % meta)
     run_cmd([find_path, target_dir, '-exec', 'touch', '{}', ';'])
 
 
 def stage_chmod(meta, params):
-    '''Chmod files below the target directory.'''
+    """ Chmod files below the target directory.
+    """
     chmod_path = which('chmod')
     target = os.path.join(meta['stage_dir'], params['target'] % meta)
     target = list(glob(target))
@@ -32,7 +35,8 @@ def stage_chmod(meta, params):
 
 
 def stage_git(meta, params):
-    '''Stage sources using git.'''
+    """ Stage sources using git.
+    """
     git_path = which('git')
     target_dir = os.path.join(meta['stage_dir'], params['target'] % meta)
     repo_url = params['repo_url']
@@ -49,7 +53,8 @@ def stage_git(meta, params):
 
 
 def stage_rsync(meta, params):
-    '''Stage sources using rsync.'''
+    """ Stage sources using rsync.
+    """
     rsync_path = which('rsync')
     target_dir = os.path.join(meta['stage_dir'], params['target'] % meta)
     repo_url = params['repo_url']
@@ -57,7 +62,8 @@ def stage_rsync(meta, params):
 
 
 def stage_symlink(meta, params):
-    '''Stage a directory or file by symlinking.'''
+    """ Stage a directory or file by symlinking.
+    """
     ln_path = which('ln')
     item = params['file']
     src_dir = item[0] % meta
@@ -77,7 +83,8 @@ def stage_symlink(meta, params):
 
 
 def stage_copy(meta, params):
-    '''Stage a file by copying.'''
+    """ Stage a file by copying.
+    """
     cp_path = which('cp')
     item = params['file']
     src_name = item[0] % meta
@@ -89,7 +96,8 @@ def stage_copy(meta, params):
 
 
 def stage_do(meta, config):
-    '''Stage according to the config.'''
+    """ Stage according to the config.
+    """
     methods = {
         'touch': stage_touch_all,
         'git': stage_git,
@@ -102,11 +110,11 @@ def stage_do(meta, config):
 
 
 def stage_setup(config_filename, stage_dir):
-    '''Setup staging.
+    """ Setup staging.
 
-    Helper for stage scripts that would take the paramters of
-    this functions as command line arguments.
-    '''
+    Helper for stage scripts that take the parameters of this function as
+    command line arguments.
+    """
     config = json.load(open(config_filename))['stage']
     meta = config.get('meta', {})
     procedure = config.get('procedure', {})

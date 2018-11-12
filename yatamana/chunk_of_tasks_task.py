@@ -6,7 +6,7 @@ from .task import Task
 
 
 class ChunkOfTasksTask(Task):
-    """ Task containing multiple tasks.
+    """Task containing multiple tasks.
 
     Parameters
     ----------
@@ -74,7 +74,7 @@ class ChunkOfTasksTask(Task):
         return resolved
 
     def render_command(self):
-        """ Render the commands of all contained tasks into a single string.
+        """Render the commands of all contained tasks into a single string.
 
         Returns
         -------
@@ -89,7 +89,13 @@ class ChunkOfTasksTask(Task):
         return ' && \\\n'.join([task.render_command() for task in self.tasks])
 
     def get_runner_prefix(self):
-        '''Return a prefix for the runner file.'''
+        """Get a prefix for the runner file.
+
+        Returns
+        -------
+        prefix : str
+            Prefix for the runner file.
+        """
         if not self.tasks:
             return 'EmptyChunkOfTasks'
         prefix = 'ChunkOf'

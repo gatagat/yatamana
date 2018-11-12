@@ -7,7 +7,7 @@ from .slurm_task_manager import SlurmTaskManager
 
 
 def get_task_manager(setup_file, **kwargs):
-    '''Create a task manager of a correct type.
+    """ Create a task manager of a correct type.
 
     Parameters
     ----------
@@ -20,7 +20,7 @@ def get_task_manager(setup_file, **kwargs):
     -------
     manager : TaskManager
         Created task manager.
-    '''
+    """
     setup = json.load(open(setup_file))
     manager = setup['manager'].lower()
     if manager == 'slurm':
